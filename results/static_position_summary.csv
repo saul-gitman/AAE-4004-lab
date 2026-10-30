@@ -1,0 +1,3 @@
+solution,epochs,x_ecef_m,y_ecef_m,z_ecef_m,lat_deg,lon_deg,h_ellipsoid_m,std_e_m,std_n_m,std_u_m,p95_horizontal_m,offset_e_from_wls_m,offset_n_from_wls_m,offset_u_from_wls_m
+"WLS SPP, GPS L1 (this work)",498,-2418197.956,5385767.807,2405760.017,22.30558496,114.17997589,18.174,63.063,24.072,68.518,21.292,0.000,0.000,0.000
+Receiver NAV-HPPOSECEF (multi-GNSS; not ground truth),498,-2418200.642,5385772.452,2405763.291,22.30559402,114.17998121,24.355,0.361,0.248,2.036,1.054,0.548,1.003,6.181

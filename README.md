@@ -1,0 +1,74 @@
+# AAE4203 GNSS Lab 1: own data, processing and results
+
+Static-log session of 30 Oct 2026 (u-blox ZED-F9P, u-center log `COM6___9600_261030_081848.ubx`),
+processed with the course pipeline: UBX → RTKCONV RINEX → GPS L1 measurement CSVs → course `WLSE_spp.py`.
+
+## The three deliverables
+
+| What | File |
+|---|---|
+| **Raw data as CSV** | `data/csv/raw_observations.csv`: every satellite signal of every epoch from UBX-RXM-RAWX (pseudorange, carrier phase, Doppler, C/N0, lock time, std devs); 40 775 rows, GPS/GLONASS/Galileo/BeiDou |
+| | `data/csv/ubx_messages/*.csv`: one CSV per UBX message type (46), e.g. `NAV-HPPOSECEF.csv` (receiver solution, cm / ms), `NAV-PVT.csv`, `NAV-SAT.csv` |
+| | `data/csv/gps_inputs/*.csv`: solver input matrices (pseudoranges, satellite positions/clocks, iono, tropo, TGD, elevation, epochs) |
+| **Position result as CSV** | `results/GXX_owndata.csv`: official five-column ECEF submission format (passes `tools/check_submission.py`) |
+| | `results/position_enu_llh.csv`: the same epochs with lat/lon/height, local E/N/U, satellites used, clock bias, moving/static flag |
+| | `results/static_position_summary.csv`: the antenna position (median of the static epochs) and spread, with the receiver's own value beside it |
+| **3D plot** | `figures/position_3d.png` |
+
+`GXX` is a placeholder: rename to your group number (e.g. `G05_owndata.csv`) or rerun with `GROUP=G05 ./run_all.sh`.
+
+## Results
+
+- **838 / 853 epochs solved (98.2 %)**; 15 omitted (fewer than 4 usable GPS satellites, listed in `results/omitted_epochs.csv`).
+- **Static antenna position** (median of 498 static epochs):
+  ECEF **(-2418197.956, 5385767.807, 2405760.017) m** = **22.30558496° N, 114.17997589° E, h = 18.17 m** (WGS-84 ellipsoidal).
+  The receiver's own multi-GNSS solution for the same epochs is 0.5 m E, 1.0 m N, 6.2 m U from it. That is agreement, not accuracy: neither is ground truth.
+- Against the receiver solution, per epoch (course metric, `results/summary.json`): 2D RMS 53.3 m, 3D RMS 76.6 m, 2D P95 20.2 m.
+  For comparison, the course example gives 37.9 m 2D RMS. The RMS is driven by a few large outliers (see below); the P95 is much lower.
+
+## Data-quality findings (put these in the report)
+
+1. **The antenna was moving for the first ~5.9 min.** The receiver's ground speed has a median of 1.0 m/s (max 1.3 m/s) until GPST 08:18:56. From 08:18:57 (tow 461937) it stays below 0.1 m/s.
+   Both our solution and the receiver trace the same loop of about 70 m (left panel of the figure).
+   Only the last ~8.3 min (498 epochs) are a static log; the guide asks for 15–20 min static.
+2. **Measurements stop at GPST 08:27:16** (plus one isolated epoch at 08:27:23). The UBX file continues to 08:31:00, but those 223 RXM-RAWX epochs are empty (fix lost), so the RINEX file has 853 epochs, not 1076.
+3. **Only 7 GPS satellites usable** (G02, G04, G08, G09, G16, G27, G31). G03, G26 and G28 were tracked but no ephemeris was decoded during the log. Epochs used 4 (148), 5 (404), 6 (279) or 7 (7) satellites, so the geometry is weak, especially vertically.
+4. **Outliers of 50 m up to 1.65 km (mostly vertical) come from weak, just-acquired signals.** G04 (59° elevation!) and G31 appear intermittently at 19–25 dB-Hz, lock time 0, pseudorange std 10–41 m. The baseline's 15 dB-Hz mask accepts them.
+   A C/N0 mask of 25–30 dB-Hz or residual-based exclusion (guide §10) would remove them. The result here is the unchanged baseline (V0).
+
+## How it was produced (and how to rerun)
+
+```bash
+pip install numpy matplotlib pyubx2
+GROUP=GXX ./run_all.sh
+```
+
+| Step | Script | Notes |
+|---|---|---|
+| UBX → CSV | `src/ubx2csv.py` | Same parsing as the course `pyubx2_csv_converter_gui.py`, without the GUI. It keeps all repeated-group columns: the GUI drops measurements beyond the first message's count. |
+| Klobuchar coefficients | `src/ubx2csv.py` → `data/csv/klobuchar_from_ubx.json` | RTKCONV wrote no `IONOSPHERIC CORR` to the `.nav`, so they are decoded from RXM-SFRBX (GPS subframe 4 page 18, 3 identical pages). The same bit extraction reproduces RTKCONV's ephemerides exactly. Without them, rinex2csv.m would use RTKLIB's default set. |
+| RINEX → measurement CSVs | `src/rinex2csv.py` | Python port of the course `rinex2csv.m` (no MATLAB here). Same masks (GPS L1, el ≥ 15°, C/N0 ≥ 15 dB-Hz) and same RTKLIB models (broadcast orbit/clock with relativity, TGD, Klobuchar, Saastamoinen). |
+| WLS positioning | `course_repo/Lab1/WLSE_spp.py --mode gps` | Course solver, unmodified |
+| Figure + tables | `src/plot_3d.py` | ENU origin = static median |
+
+**Verification of the Python port.** Run on the course benchmark (`benchmark/urbannav_deep1.obs/.nav`) and compared with the MATLAB-generated `benchmark/gps_csv/`:
+- the same 1437/1534 epochs converted, identical NaN pattern, identical `epochs.csv`, pseudoranges and TGD;
+- on every epoch without G02: satellite positions within 2e-7 m, clocks within 1e-9 m, iono and tropo within 1e-9 m, elevation within 1e-11°;
+- epochs with G02 are the one exception. The benchmark NAV holds two valid G02 ephemerides (IODE 1, toe 460784 and IODE 99, toe 460800). This port takes the closest toe; matRTKLIB takes the other one. That gives 0.29 m clock and ≤ 1 m orbit difference for G02, and ≤ 3 mm tropo for the other satellites via the slightly shifted receiver position.
+
+  Your own NAV has one ephemeris per GPS satellite, so this cannot occur there.
+
+## Folder layout
+
+```text
+AAE4203_GNSS_Lab1/
+├── data/raw/            original u-center UBX log
+├── data/rinex/          RTKCONV-EX 2.5.1 output (.obs, .nav)
+├── data/csv/            raw-data CSVs (see above)
+├── results/             position CSVs + solver summary
+├── figures/             position_3d.png
+├── src/                 ubx2csv.py, rinex2csv.py, plot_3d.py
+├── docs/                merged lab guideline (Markdown)
+├── course_repo/Lab1/    copy of weisongwen/AAE4203-S12627 Lab1 (benchmark + example datasets); see course_repo/SOURCE.md
+└── run_all.sh
+```

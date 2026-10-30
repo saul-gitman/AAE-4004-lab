@@ -1,0 +1,16 @@
+{
+  "mode": "gps",
+  "input_epochs": 853,
+  "solved_epochs": 838,
+  "omitted_epochs": 15,
+  "coverage_percent": 98.24150058616647,
+  "no_ground_truth_used_for_positioning": true,
+  "time_grid": "Actual OBS GPST rounded to 0.1 s only in submission CSV",
+  "receiver_comparison": {
+    "reference": "receiver standalone solution, NOT ground truth",
+    "matched_epochs": 838,
+    "rmse_2d_m": 53.26725589138325,
+    "rmse_3d_m": 76.57417884533109,
+    "p95_2d_m": 20.228619894194587
+  }
+}
