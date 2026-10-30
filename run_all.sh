@@ -22,3 +22,4 @@ $PY src/rinex2csv.py data/rinex/$LOG.obs data/rinex/$LOG.nav data/csv/gps_inputs
 
 # 4. 3D figure + LLH/ENU table + static position summary
 $PY src/plot_3d.py
+$PY src/animate_3d.py

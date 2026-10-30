@@ -14,6 +14,7 @@ processed with the course pipeline: UBX → RTKCONV RINEX → GPS L1 measurement
 | | `results/position_enu_llh.csv`: the same epochs with lat/lon/height, local E/N/U, satellites used, clock bias, moving/static flag |
 | | `results/static_position_summary.csv`: the antenna position (median of the static epochs) and spread, with the receiver's own value beside it |
 | **3D plot** | `figures/position_3d.png` |
+| | `figures/position_3d.gif`: animation of the whole log in time order (`src/animate_3d.py`) |
 
 `GXX` is a placeholder: rename to your group number (e.g. `G05_owndata.csv`) or rerun with `GROUP=G05 ./run_all.sh`.
 
