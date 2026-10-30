@@ -1,0 +1,9 @@
+{
+  "mode": "gps",
+  "input_epochs": 1534,
+  "solved_epochs": 1437,
+  "omitted_epochs": 97,
+  "coverage_percent": 93.67666232073012,
+  "no_ground_truth_used_for_positioning": true,
+  "time_grid": "Actual OBS GPST rounded to 0.1 s only in submission CSV"
+}

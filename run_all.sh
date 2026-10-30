@@ -20,6 +20,16 @@ $PY src/rinex2csv.py data/rinex/$LOG.obs data/rinex/$LOG.nav data/csv/gps_inputs
     --submission "${GROUP}_owndata.csv" \
     --reference ../../data/csv/ubx_messages/NAV-HPPOSECEF.csv)
 
-# 4. 3D figure + LLH/ENU table + static position summary
+# 4. Benchmark baseline (course GPS cache), same solver
+(cd course_repo/Lab1 && $PY WLSE_spp.py --mode gps \
+    --input-dir benchmark/gps_csv --output-dir ../../results/benchmark \
+    --submission "${GROUP}_benchmark.csv")
+
+# 5. Figures, animations and report statistics
 $PY src/plot_3d.py
 $PY src/animate_3d.py
+$PY src/animate_track.py
+$PY src/report_figures.py
+
+# 6. Lab report (Word) from the course template; needs pandoc
+$PY report/build_report.py

@@ -1,0 +1,129 @@
+{
+ "first_epoch_gpst_tow": 461585.002,
+ "last_epoch_gpst_tow": 462434.002,
+ "static_from_tow": 461937.0,
+ "epochs_obs": 853,
+ "epochs_solved": 838,
+ "epochs_static": 498,
+ "static_mean_enu_about_median_m": [
+  -9.27,
+  0.77,
+  8.19
+ ],
+ "static_std_enu_m": [
+  63.06,
+  24.07,
+  68.52
+ ],
+ "static_radius_p50_m": 2.2,
+ "static_radius_p95_m": 21.0,
+ "static_epochs_beyond_50m_h": 14,
+ "spp_minus_receiver_all": {
+  "epochs": 838,
+  "mean_enu_m": [
+   -4.91,
+   -0.92,
+   5.17
+  ],
+  "std_enu_m": [
+   49.5,
+   19.12,
+   54.8
+  ],
+  "median_enu_m": [
+   -0.57,
+   -0.69,
+   -2.38
+  ],
+  "rms_2d_m": 53.27,
+  "rms_3d_m": 76.57,
+  "p50_2d_m": 2.66,
+  "p95_2d_m": 20.23
+ },
+ "spp_minus_receiver_static": {
+  "epochs": 498,
+  "mean_enu_m": [
+   -9.54,
+   -0.21,
+   2.14
+  ],
+  "std_enu_m": [
+   63.0,
+   24.06,
+   68.45
+  ],
+  "median_enu_m": [
+   -0.71,
+   -0.75,
+   -5.96
+  ],
+  "rms_2d_m": 68.05,
+  "rms_3d_m": 96.49,
+  "p50_2d_m": 2.53,
+  "p95_2d_m": 20.32
+ },
+ "sats_mean_per_constellation": {
+  "GPS": 6.8,
+  "Galileo": 7.4,
+  "BeiDou": 7.9,
+  "GLONASS": 7.9
+ },
+ "gps_used_counts": {
+  "4": 148,
+  "5": 404,
+  "6": 279,
+  "7": 7
+ },
+ "gps_hdop_median": 1.46,
+ "gps_vdop_median": 2.56,
+ "gps_hdop_max": 4.0,
+ "gps_vdop_max": 8.4,
+ "receiver_hdop_median": 0.57,
+ "receiver_vdop_median": 1.01,
+ "gps_l1_cn0_mean_per_sat": {
+  "G08": 46.9,
+  "G27": 46.6,
+  "G16": 42.7,
+  "G04": 37.2,
+  "G31": 36.9,
+  "G09": 36.2,
+  "G03": 29.2,
+  "G02": 27.8,
+  "G28": 26.3,
+  "G26": 25.5
+ },
+ "signal_cn0": {
+  "C B1I D1": {
+   "obs": 6749,
+   "median_cn0": 42.0
+  },
+  "C B2I D1": {
+   "obs": 1423,
+   "median_cn0": 40.0
+  },
+  "E E1C": {
+   "obs": 5788,
+   "median_cn0": 39.0
+  },
+  "E E5bQ": {
+   "obs": 5593,
+   "median_cn0": 37.0
+  },
+  "G L1C/A": {
+   "obs": 4856,
+   "median_cn0": 43.0
+  },
+  "G L2CL": {
+   "obs": 4442,
+   "median_cn0": 38.0
+  },
+  "R L1OF": {
+   "obs": 6611,
+   "median_cn0": 36.0
+  },
+  "R L2OF": {
+   "obs": 5313,
+   "median_cn0": 30.0
+  }
+ }
+}
